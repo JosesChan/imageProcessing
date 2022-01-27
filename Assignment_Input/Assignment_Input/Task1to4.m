@@ -71,7 +71,7 @@ chosen_I = A_binary_I;
 edgeP = edge(chosen_I, "Prewitt");
 edgeS = edge(chosen_I, "Sobel");
 edgeC = edge(chosen_I, "Canny");
-edgeL = edge(chosen_I, "log")
+edgeL = edge(chosen_I, "log");
 
 
 % Task 3: Simple segmentation --------------------
