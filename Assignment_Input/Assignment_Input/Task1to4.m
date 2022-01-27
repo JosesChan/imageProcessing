@@ -30,7 +30,7 @@ newAspectRatio=height/width;
 %figure, imshow(resized_I_gray)
 
 % Step-4: Produce histogram before enhancing, bin size 64
-%figure, imhist(resized_I_gray, 64)
+figure, imhist(resized_I_gray, 64)
 
 % Step-5: Enhance image before binarisation
 imageIntensity = 255*im2double(resized_I_gray); % converts the intensity image I to double precision
@@ -42,7 +42,7 @@ maximum = max(max(imageIntensity)); % find the maximum pixel intensity
 % adapthisteq (Enhances noise but highlights contrast for subtle features)
 
 A_enhanced_resized_I_gray = imadjust(resized_I_gray,[minimum/255; maximum/255],[0; 1]);
-B_enhanced_resized_I_gray = histeq(resized_I_gray, 64);
+B_enhanced_resized_I_gray = histeq(resized_I_gray);
 C_enhanced_resized_I_gray = adapthisteq(resized_I_gray);
 
 %figure, imshow(A_enhanced_resized_I_gray)
@@ -63,10 +63,10 @@ C_binary_I = imbinarize(C_enhanced_resized_I_gray);
 
 %figure, imshow(A_binary_I)
 figure, imshow(B_binary_I)
-figure, imshow(C_binary_I)
+%figure, imshow(C_binary_I)
 
 % Task 2: Edge detection ------------------------
-chosen_I = C_binary_I;
+chosen_I = B_binary_I;
 
 edgeP = edge(chosen_I, "Prewitt");
 edgeS = edge(chosen_I, "Sobel");
@@ -80,5 +80,11 @@ figure, imshow(edgeC)
 figure, imshow(edgeL)
 
 % Task 3: Simple segmentation --------------------
+
+% Implement morphology techniques
+
+thresh = 0.4;
+segmentation_I = imbinarize(A_enhanced_resized_I_gray, 0.2);
+figure, imshow(segmentation_I)
 
 % Task 4: Object Recognition --------------------
