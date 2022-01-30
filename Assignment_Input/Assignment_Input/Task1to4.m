@@ -2,7 +2,7 @@ clear; close all;
 
 % Task 1: Pre-processing -----------------------
 % Step-1: Load input image
-I = imread('IMG_01.png');
+I = imread('IMG_11.png');
 %figure, imshow(I)
 
 % Step-2: Covert image to grayscale
@@ -109,6 +109,9 @@ sw_segmentation_I=sw_segmentation_I(1:end-1,2:end);
 % to fill in areas where other images aren't filled
 segmentation_I=nw_segmentation_I|ne_segmentation_I|se_segmentation_I|sw_segmentation_I;
 
+% Filter for noise
+% segmentation_I = medfilt2(segmentation_I);
+
 
 %segmentation_I = imclose(segmentation_I,se)
 figure, imshow(segmentation_I)
@@ -116,4 +119,4 @@ figure, imshow(segmentation_I)
 
 % Task 4: Object Recognition --------------------
 
-% Implement morphology techniques
+
