@@ -89,11 +89,11 @@ segmentation_I = imfilter(segmentation_I,h);
 % Create images with padding of a white line
 % to fill in boundary bloodcells, 2 edge pads per corner
 nw_segmentation_I=padarray(segmentation_I,[1 1],1,"pre");
-%ne_segmentation_I=padarray(segmentation_I,[1 0],1,"pre");
-ne_segmentation_I=padarray(padarray(segmentation_I,[1 0],1,"pre"),[0 1],1,"post");
+ne_segmentation_I=padarray(segmentation_I,[1 0],1,"pre");
+ne_segmentation_I=padarray(ne_segmentation_I,[0 1],1,"post");
 se_segmentation_I=padarray(segmentation_I,[1 1],1,"post");
-%sw_segmentation_I=padarray(segmentation_I,[1 0],1,"pre");
-sw_segmentation_I=padarray(padarray(segmentation_I,[1 0],1,"pre"),[0 1],1,"post");
+sw_segmentation_I=padarray(segmentation_I,[1 0],1,"post");
+sw_segmentation_I=padarray(sw_segmentation_I,[0 1],1,"pre");
 
 
 % Image fill on all border pad image to gain border image segments
@@ -101,12 +101,6 @@ nw_segmentation_I=imfill(nw_segmentation_I,"holes");
 ne_segmentation_I=imfill(ne_segmentation_I,"holes");
 se_segmentation_I=imfill(se_segmentation_I,"holes");
 sw_segmentation_I=imfill(sw_segmentation_I,"holes");
-
-
-figure, imshow(nw_segmentation_I)
-figure, imshow(ne_segmentation_I)
-figure, imshow(se_segmentation_I)
-figure, imshow(sw_segmentation_I)
 
 % Remove padding from each pad image
 nw_segmentation_I=nw_segmentation_I(2:end,2:end);
@@ -122,8 +116,7 @@ segmentation_I=nw_segmentation_I|ne_segmentation_I|se_segmentation_I|sw_segmenta
 % Remove small objects with less than 100 pixels
 segmentation_I=bwareaopen(segmentation_I,100);
 
-
-%figure, imshow(segmentation_I)
+figure, imshow(segmentation_I)
 
 
 % Task 4: Object Recognition --------------------
