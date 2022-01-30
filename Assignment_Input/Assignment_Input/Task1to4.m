@@ -121,4 +121,39 @@ figure, imshow(segmentation_I)
 
 % Task 4: Object Recognition --------------------
 
+%image_labels = bwlabel(segmentation_I);
+
+% Find boundaries and avoid searching for inner contours
+[B,L] = bwboundaries(segmentation_I,"noholes");
+
+imshow(label2rgb(L,@jet,[.5 .5 .5]))
+hold on
+for k = 1:length(B)
+    boundary = B{k};
+    plot(boundary(:,2),boundary(:,1),"w","LineWidth",2)
+end
+stats = regionprops(L,"Centroid","Area");
+threshhold=0.94;
+for current = i:length(B)
+	boundary = B{current};
+    delta_sq = diff(boundary).^2;
+    perimter = sum(sqrt(sum(delta_sq,2)));
+    
+    area = stats(current).Area;
+    
+    roundnessMetric = 4*pi*area/perimeter^2;
+    
+    % mark objects above thresh hold
+    if metric>threshold
+        centroid = stats(current).Centroid;
+        plot(centroid(1),centroid(2),"ko");
+    end
+    
+    text(boundary(1,2)-35,boundary(1,1)+13,metric_string,"Color","y","FontSize",14,"FontWeight","Bold")
+end
+
+
+
+
+
 
