@@ -133,9 +133,10 @@ for k = 1:length(B)
     plot(boundary(:,2),boundary(:,1),"w","LineWidth",2)
 end
 stats = regionprops(L,"Centroid","Area");
-threshhold=0.94;
+threshhold=0.60;
 for current = i:length(B)
 	boundary = B{current};
+    
     delta_sq = diff(boundary).^2;
     perimter = sum(sqrt(sum(delta_sq,2)));
     
