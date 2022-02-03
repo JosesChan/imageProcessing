@@ -16,17 +16,24 @@ enhanced_I_gray = imadjust(I_gray);
 
 % Create images with padding of a white line
 % to fill in boundary bloodcells, 2 edge pads per corner
-nw_segmentation_I=padarray(segmentation_I,[1 1],1,"pre");ne_segmentation_I=padarray(segmentation_I,[1 0],1,"pre");
-ne_segmentation_I=padarray(ne_segmentation_I,[0 1],1,"post");se_segmentation_I=padarray(segmentation_I,[1 1],1,"post");
-sw_segmentation_I=padarray(segmentation_I,[1 0],1,"post");sw_segmentation_I=padarray(sw_segmentation_I,[0 1],1,"pre");
+nw_segmentation_I=padarray(segmentation_I,[1 1],1,"pre");
+ne_segmentation_I=padarray(segmentation_I,[1 0],1,"pre");
+ne_segmentation_I=padarray(ne_segmentation_I,[0 1],1,"post");
+se_segmentation_I=padarray(segmentation_I,[1 1],1,"post");
+sw_segmentation_I=padarray(segmentation_I,[1 0],1,"post");
+sw_segmentation_I=padarray(sw_segmentation_I,[0 1],1,"pre");
+
 
 % Image fill on all border pad image to gain border image segments
-nw_segmentation_I=imfill(nw_segmentation_I,"holes");ne_segmentation_I=imfill(ne_segmentation_I,"holes");
-se_segmentation_I=imfill(se_segmentation_I,"holes");sw_segmentation_I=imfill(sw_segmentation_I,"holes");
+nw_segmentation_I=imfill(nw_segmentation_I,"holes");
+ne_segmentation_I=imfill(ne_segmentation_I,"holes");
+se_segmentation_I=imfill(se_segmentation_I,"holes");
+sw_segmentation_I=imfill(sw_segmentation_I,"holes");
 
 % Remove padding from each pad image
 nw_segmentation_I=nw_segmentation_I(2:end,2:end);ne_segmentation_I=ne_segmentation_I(2:end,1:end-1);
 se_segmentation_I=se_segmentation_I(1:end-1,1:end-1);sw_segmentation_I=sw_segmentation_I(1:end-1,2:end);
+
 
 % Logical Or operator, allowing pixels from different padding images
 % to fill in areas where other images aren't filled

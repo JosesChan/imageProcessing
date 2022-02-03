@@ -128,13 +128,13 @@ figure, imshow(segmentation_I)
 % Find boundaries and avoid searching for inner contours
 [B,L] = bwboundaries(segmentation_I,"noholes");
 
-labeledImage = bwlabel(segmentation_I);
+labeledImage = bwlabel(binaryImage);
 props = regionprops(labeledImage, 'BoundingBox, 'Centroid');
 rgbImage = label2rgb(labeledImage, hsv(256), ..........................etc.
 for k = 1 : numberOfRegions
     thisColor = hsv(k);
-    x = 0;..........whatever
-    y = 0;.........whatever
+    x = ..........whatever
+    y = .........whatever
     caption = sprintf('Blob #%d', k);    % Whatever you want to say about this blob.
     text(x, y, caption);
 end
