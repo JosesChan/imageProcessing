@@ -33,7 +33,8 @@ figure, imshow(mask);
 segment_I = activecontour(I_gray,mask,500);
 % Remove small blobs
 segment_I = bwareaopen(segment_I, 150);
-figure, imshow(segment_I);
+
+
 
 % Find bloodcells within the image, by looking at 
 [centers, radii] = imfindcircles(segment_I, [50 1000], "Sensitivity", 0.95, "method", "TwoStage");
@@ -48,19 +49,61 @@ for i=1:numel(radii)
 end
 
 bloodcell = segment_I.*mask;
+bloodcell = imbinarize(bloodcell);
 
-labelBloodCell = bwlabel(bloodcell);
-imageLabel = (label ==1);
+% Get rescaled height
+aimedHeight=size(I,2);
+currentHeight = size(I_gray, 2);
+scaleHeight = aimedHeight/currentHeight;
+targetHeight = currentHeight*scaleHeight;
+
+% Used bicubic interpolation to retain aspect ratio
+bloodcell = imresize(bloodcell,[targetHeight, NaN],"bicubic");
+bacteria = imresize(bacteria,[targetHeight, NaN],"bicubic");
+background = imresize(bloodcell,[targetHeight, NaN],"bicubic");
+
+figure, imshow(bloodcell);
+
+bacteria = xor(segment_I, bloodcell);
+
+figure, imshow(bacteria);
+
+background = zeros(size(I_gray));
+
+figure, imshow(background);
+
+imshowpair(bloodcell, GT)
+title(['Dice Index = ' num2str(similarity)]);
+
+[precision] = bfscore(bloodcell,groundTruth);
+[recall] = bfscore(bloodcell,groundTruth);
+
+imshowpair(bloodcell, GT)
+title(['Precision Index = ' num2str(precision)]);
+
+imshowpair(bloodcell, GT)
+title(['Recall Index = ' num2str(recall)]);
+
+% Label for background
+%addLabel(ldc,0,labelType.PixelLabel);
+% Label for blood cells
+%addLabel(ldc,1,labelType.PixelLabel);
+% Label for bacteria
+%addLabel(ldc,2,labelType.PixelLabel);
+%labelBloodCell = bwlabel(bloodcell);
+%imageLabel = (label ==1);
 
 %label bloodcell
 
 figure, imshow(segment_I.*mask);
 
+
+
 % Task 6: Performance evaluation -----------------
 % Step 1: Load ground truth data
-%GT = imread("IMG_01_GT.png");
+GT = imread("IMG_01_GT.png");
 
 % To visualise the ground truth image, you can
 % use the following code.
-%L_GT = label2rgb(GT, 'prism','k','shuffle');
-%figure, imshow(L_GT);
+L_GT = label2rgb(GT, 'prism','k','shuffle');
+figure, imshow(L_GT);

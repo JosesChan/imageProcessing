@@ -113,19 +113,19 @@ figure, imshow(segmentation_I)
 
 % Task 4: Object Recognition --------------------
 
-%image_labels = bwlabel(segmentation_I);
+% Find bloodcells within the image, by looking at 
+[centers, radii] = imfindcircles(segmentation_I, [50 1000], "Sensitivity", 0.95, "method", "TwoStage");
+%h = viscircles(centers, radii,'Color','r');
+%maskBloodCell = [centers, radii];
 
-% Find boundaries and avoid searching for inner contours
-[B,L] = bwboundaries(segmentation_I,"noholes");
+% Create mask
+[x y]=meshgrid(1:size(I_gray,2),1:size(I_gray,1));
+mask=zeros(size(I_gray));
 
-%labeledImage = bwlabel(segmentation_I);
-%props = regionprops(labeledImage, 'BoundingBox, 'Centroid');
-%rgbImage = label2rgb(labeledImage, hsv(256), ..........................etc.
-%for k = 1 : numberOfRegions
-%    thisColor = hsv(k);
- %   x = 0;..........whatever
-  %  y = 0;.........whatever
-   % caption = sprintf('Blob #%d', k);    % Whatever you want to say about this blob.
-    %text(x, y, caption);
-%end
+for i=1:numel(radii)
+    mask = mask | (x-centers(i,1)).^2+(y-centers(i,2)).^2<=radii(i).^2;
+end
+
+bloodcell = segment_I.*mask;
+figure, imshow(segment_I.*mask);
 

@@ -6,7 +6,6 @@ I = imread('IMG_11.png');
 
 % Step-2: Covert image to grayscale
 I_gray = rgb2gray(I);
-I_gray = imresize(I_gray,[512, NaN],"bicubic");
 figure, imshow(I_gray)
 
 % Step 3: Morpohology
@@ -34,13 +33,12 @@ segment_I = activecontour(I_gray,mask,500);
 % Remove small blobs
 segment_I = bwareaopen(segment_I, 150);
 
-
-
 % Find bloodcells within the image, by looking at 
 [centers, radii] = imfindcircles(segment_I, [50 1000], "Sensitivity", 0.95, "method", "TwoStage");
 %h = viscircles(centers, radii,'Color','r');
 %maskBloodCell = [centers, radii];
 
+% Create mask
 [x y]=meshgrid(1:size(I_gray,2),1:size(I_gray,1));
 mask=zeros(size(I_gray));
 
@@ -49,43 +47,31 @@ for i=1:numel(radii)
 end
 
 bloodcell = segment_I.*mask;
+figure, imshow(segment_I.*mask);
+
+% Task 6: Performance evaluation -----------------
+% Step 1: Load ground truth data
+GT = imread("IMG_11_GT.png");
+
 bloodcell = imbinarize(bloodcell);
-
-
-figure, imshow(bloodcell);
-
 bacteria = xor(segment_I, bloodcell);
-
-figure, imshow(bacteria);
-
 background = zeros(size(I_gray));
 
+figure, imshow(bloodcell);
+figure, imshow(bacteria);
 figure, imshow(background);
 
 imshowpair(bloodcell, GT)
 title(['Dice Index = ' num2str(similarity)])
 
+[precision] = bfscore(bloodcell,groundTruth);
+[recall] = bfscore(bloodcell,groundTruth);
+
 imshowpair(bloodcell, GT)
-title(['Dice Index = ' num2str(similarity)])
+title(['Precision Index = ' num2str(precision)]);
 
-% Label for background
-%addLabel(ldc,0,labelType.PixelLabel);
-% Label for blood cells
-%addLabel(ldc,1,labelType.PixelLabel);
-% Label for bacteria
-%addLabel(ldc,2,labelType.PixelLabel);
-%labelBloodCell = bwlabel(bloodcell);
-%imageLabel = (label ==1);
-
-%label bloodcell
-
-figure, imshow(segment_I.*mask);
-
-
-
-% Task 6: Performance evaluation -----------------
-% Step 1: Load ground truth data
-GT = imread("IMG_01_GT.png");
+imshowpair(bloodcell, GT)
+title(['Recall Index = ' num2str(recall)]);
 
 % To visualise the ground truth image, you can
 % use the following code.
