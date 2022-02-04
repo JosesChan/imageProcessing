@@ -32,9 +32,20 @@ figure, imshow(mask);
 % Apply active contour alg
 segment_I = activecontour(I_gray,mask,500);
 % Remove small blobs
-segment_I = bwareaopen(segment_I, 100)
+segment_I = bwareaopen(segment_I, 150);
 figure, imshow(segment_I);
 
+% Find bloodcells within the image, by looking at 
+[centers, radii] = imfindcircles(segment_I, [50 1000], "Sensitivity", 0.95, "method", "TwoStage");
+viscircles(centers, radii,'Color','b');
+
+maskBloodCell = [centers, radii]
+
+%for k = 1:length(B)
+%  perimeterBoundaries = B{k};
+%end
+
+%imshow(labeloverlay(I,segment_I));
 
 
 % Task 6: Performance evaluation -----------------

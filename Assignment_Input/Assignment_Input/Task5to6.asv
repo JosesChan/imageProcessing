@@ -2,7 +2,7 @@
 
 % Task 1: Pre-processing -----------------------
 % Step-1: Load input image
-I = imread('IMG_11.png');
+I = imread('IMG_06.png');
 
 % Step-2: Covert image to grayscale
 I_gray = rgb2gray(I);
@@ -12,6 +12,7 @@ figure, imshow(I_gray)
 % Step 3: Morpohology
 SE = strel('disk',4);
 I_gray = imsharpen(I_gray);
+%I_gray = imfill(I_gray,"holes");
 I_gray = imopen(I_gray, SE);
 figure, imshow(I_gray);
 
@@ -23,17 +24,32 @@ figure, imshow(I_gray);
 %figure, imshow(morph_gray);
 
 % Contour Method
-% convex hull of all images
-% 80 due to dark/light pixel value
+% Create mask from image size, difference of 1 row and 1 col
 mask = zeros(size(I_gray));
 mask(1:end-1,1:end-1) = 1;
 figure, imshow(mask);
 
+% Apply active contour alg
 segment_I = activecontour(I_gray,mask,500);
+% Remove small blobs
+segment_I = bwareaopen(segment_I, 150)
 figure, imshow(segment_I);
 
-% Morphological operation
-bwareaopen
+
+% Calculate perimeter
+%perimeterBoundaries(segment_I,'Color','r'); 
+
+[B,L] = bwboundaries(segment_I,'noholes');
+
+for k = 1:length(B)
+  perimeterBoundaries = B{k};
+  [centers,radii] = imfindcircles(perimeterBoundaries,[20 25],'ObjectPolarity','bright','Method','twostage');
+  im
+  h = viscircles(centers,radii);
+end
+
+%imshow(labeloverlay(I,segment_I));
+
 
 % Task 6: Performance evaluation -----------------
 % Step 1: Load ground truth data
