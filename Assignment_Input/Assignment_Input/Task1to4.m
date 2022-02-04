@@ -21,7 +21,11 @@ aimedHeight = 512;
 scaleHeight = aimedHeight/height;
 
 % Used bicubic interpolation to retain aspect ratio
-resized_I_gray = imresize(resized_I_gray,[512, NaN],"bicubic");
+resized_I_gray_unfiltered = imresize(resized_I_gray,[512, NaN],"bicubic");
+
+% Filter for noise
+h = fspecial("average",3);
+resized_I_gray= imfilter(resized_I_gray_unfiltered,h);
 
 width=size(resized_I_gray,1);
 height=size(resized_I_gray,2);
@@ -42,13 +46,12 @@ maximum = max(max(imageIntensity)); % find the maximum pixel intensity
 % adapthisteq (Enhances noise but highlights contrast for subtle features)
 
 A_enhanced_resized_I_gray = imadjust(resized_I_gray);
-%A_enhanced_resized_I_gray = imadjust(resized_I_gray,[minimum/255; maximum/255],[0; 1]);
 B_enhanced_resized_I_gray = histeq(resized_I_gray);
 C_enhanced_resized_I_gray = adapthisteq(resized_I_gray);
 
 %figure, imshow(A_enhanced_resized_I_gray)
 %figure, imshow(B_enhanced_resized_I_gray)
-figure, imshow(C_enhanced_resized_I_gray)
+%figure, imshow(C_enhanced_resized_I_gray)
 
 % Step-6: Histogram after enhancement
 
@@ -62,7 +65,7 @@ A_binary_I = imbinarize(A_enhanced_resized_I_gray);
 B_binary_I = imbinarize(B_enhanced_resized_I_gray);
 C_binary_I = imbinarize(C_enhanced_resized_I_gray);
 
-%figure, imshow(A_binary_I)
+figure, imshow(A_binary_I)
 %figure, imshow(B_binary_I)
 %figure, imshow(C_binary_I)
 
@@ -74,10 +77,10 @@ edgeS = edge(chosen_I, "Sobel");
 edgeC = edge(chosen_I, "Canny");
 edgeL = edge(chosen_I, "log");
 
-figure, imshow(edgeP)
-figure, imshow(edgeS)
-figure, imshow(edgeC)
-figure, imshow(edgeL)
+%figure, imshow(edgeP)
+%figure, imshow(edgeS)
+%figure, imshow(edgeC)
+%figure, imshow(edgeL)
 
 % Task 3: Simple segmentation --------------------
 % Select image
@@ -85,35 +88,22 @@ segmentation_I = chosen_I;
 
 % Create images with padding of a white line
 % to fill in boundary bloodcells, 2 edge pads per corner
-nw_segmentation_I=padarray(segmentation_I,[1 1],1,"pre");
-ne_segmentation_I=padarray(segmentation_I,[1 0],1,"pre");
-ne_segmentation_I=padarray(ne_segmentation_I,[0 1],1,"post");
-se_segmentation_I=padarray(segmentation_I,[1 1],1,"post");
-sw_segmentation_I=padarray(segmentation_I,[1 0],1,"post");
-sw_segmentation_I=padarray(sw_segmentation_I,[0 1],1,"pre");
+nw_segmentation_I=padarray(segmentation_I,[1 1],1,"pre"); ne_segmentation_I=padarray(segmentation_I,[1 0],1,"pre");
+ne_segmentation_I=padarray(ne_segmentation_I,[0 1],1,"post"); se_segmentation_I=padarray(segmentation_I,[1 1],1,"post");
+sw_segmentation_I=padarray(segmentation_I,[1 0],1,"post"); sw_segmentation_I=padarray(sw_segmentation_I,[0 1],1,"pre");
 
 
 % Image fill on all border pad image to gain border image segments
-nw_segmentation_I=imfill(nw_segmentation_I,"holes");
-ne_segmentation_I=imfill(ne_segmentation_I,"holes");
-se_segmentation_I=imfill(se_segmentation_I,"holes");
-sw_segmentation_I=imfill(sw_segmentation_I,"holes");
+nw_segmentation_I=imfill(nw_segmentation_I,"holes");ne_segmentation_I=imfill(ne_segmentation_I,"holes");
+se_segmentation_I=imfill(se_segmentation_I,"holes");sw_segmentation_I=imfill(sw_segmentation_I,"holes");
 
 % Remove padding from each pad image
-nw_segmentation_I=nw_segmentation_I(2:end,2:end);
-ne_segmentation_I=ne_segmentation_I(2:end,1:end-1);
-se_segmentation_I=se_segmentation_I(1:end-1,1:end-1);
-sw_segmentation_I=sw_segmentation_I(1:end-1,2:end);
-
+nw_segmentation_I=nw_segmentation_I(2:end,2:end);ne_segmentation_I=ne_segmentation_I(2:end,1:end-1);
+se_segmentation_I=se_segmentation_I(1:end-1,1:end-1);sw_segmentation_I=sw_segmentation_I(1:end-1,2:end);
 
 % Logical Or operator, allowing pixels from different padding images
 % to fill in areas where other images aren't filled
 segmentation_I=nw_segmentation_I|ne_segmentation_I|se_segmentation_I|sw_segmentation_I;
-
-
-% Filter for noise
-h = fspecial("average",3);
-segmentation_I = imfilter(segmentation_I,h);
 
 % Remove small objects with less than 100 pixels
 segmentation_I=bwareaopen(segmentation_I,100);
@@ -128,14 +118,14 @@ figure, imshow(segmentation_I)
 % Find boundaries and avoid searching for inner contours
 [B,L] = bwboundaries(segmentation_I,"noholes");
 
-labeledImage = bwlabel(segmentation_I);
-props = regionprops(labeledImage, 'BoundingBox, 'Centroid');
-rgbImage = label2rgb(labeledImage, hsv(256), ..........................etc.
-for k = 1 : numberOfRegions
-    thisColor = hsv(k);
-    x = 0;..........whatever
-    y = 0;.........whatever
-    caption = sprintf('Blob #%d', k);    % Whatever you want to say about this blob.
-    text(x, y, caption);
-end
+%labeledImage = bwlabel(segmentation_I);
+%props = regionprops(labeledImage, 'BoundingBox, 'Centroid');
+%rgbImage = label2rgb(labeledImage, hsv(256), ..........................etc.
+%for k = 1 : numberOfRegions
+%    thisColor = hsv(k);
+ %   x = 0;..........whatever
+  %  y = 0;.........whatever
+   % caption = sprintf('Blob #%d', k);    % Whatever you want to say about this blob.
+    %text(x, y, caption);
+%end
 
