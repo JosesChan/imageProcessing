@@ -2,7 +2,7 @@
 
 % Task 1: Pre-processing -----------------------
 % Step-1: Load input image
-I = imread('IMG_06.png');
+I = imread('IMG_11.png');
 
 % Step-2: Covert image to grayscale
 I_gray = rgb2gray(I);
@@ -32,24 +32,29 @@ figure, imshow(mask);
 % Apply active contour alg
 segment_I = activecontour(I_gray,mask,500);
 % Remove small blobs
-segment_I = bwareaopen(segment_I, 150)
+segment_I = bwareaopen(segment_I, 150);
 figure, imshow(segment_I);
 
+% Find bloodcells within the image, by looking at 
+[centers, radii] = imfindcircles(segment_I, [50 1000], "Sensitivity", 0.95, "method", "TwoStage");
+%h = viscircles(centers, radii,'Color','r');
+%maskBloodCell = [centers, radii];
 
-% Calculate perimeter
-%perimeterBoundaries(segment_I,'Color','r'); 
+[x y]=meshgrid(1:size(I_gray,2),1:size(I_gray,1));
+mask=zeros(size(I_gray));
 
-[B,L] = bwboundaries(segment_I,'noholes');
-
-for k = 1:length(B)
-  perimeterBoundaries = B{k};
-  [centers,radii] = imfindcircles(perimeterBoundaries,[20 25],'ObjectPolarity','bright','Method','twostage');
-  im
-  h = viscircles(centers,radii);
+for i=1:numel(radii)
+    mask = mask | (x-centers(i,1)).^2+(y-centers(i,2)).^2<=radii(i).^2;
 end
 
-%imshow(labeloverlay(I,segment_I));
+bloodcell = segment_I.*mask;
 
+labelBloodCell = bwlabel(bloodcell);
+imageLabel = (label ==1);
+
+%label bloodcell
+
+figure, imshow(segment_I.*mask);
 
 % Task 6: Performance evaluation -----------------
 % Step 1: Load ground truth data

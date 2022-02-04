@@ -37,22 +37,37 @@ figure, imshow(segment_I);
 
 % Find bloodcells within the image, by looking at 
 [centers, radii] = imfindcircles(segment_I, [50 1000], "Sensitivity", 0.95, "method", "TwoStage");
-viscircles(centers, radii,'Color','b');
+%h = viscircles(centers, radii,'Color','r');
+%maskBloodCell = [centers, radii];
 
-maskBloodCell = [centers, radii]
+[x y]=meshgrid(1:size(I_gray,2),1:size(I_gray,1));
+mask=zeros(size(I_gray));
 
-%for k = 1:length(B)
-%  perimeterBoundaries = B{k};
-%end
+for i=1:numel(radii)
+    mask = mask | (x-centers(i,1)).^2+(y-centers(i,2)).^2<=radii(i).^2;
+end
 
-%imshow(labeloverlay(I,segment_I));
+bloodcell = segment_I.*mask;
+% Label for 
+addLabel(ldc,0,labelType);
+% Label for blood cells
+addLabel(ldc,1,labelType.Rectangle);
+% Label for bacteria
+addLabel(ldc,2,labelType);
+%labelBloodCell = bwlabel(bloodcell);
+%imageLabel = (label ==1);
+
+%label bloodcell
+
+figure, imshow(segment_I.*mask);
+
 
 
 % Task 6: Performance evaluation -----------------
 % Step 1: Load ground truth data
-%GT = imread("IMG_01_GT.png");
+GT = imread("IMG_01_GT.png");
 
 % To visualise the ground truth image, you can
 % use the following code.
-%L_GT = label2rgb(GT, 'prism','k','shuffle');
-%figure, imshow(L_GT);
+L_GT = label2rgb(GT, 'prism','k','shuffle');
+figure, imshow(L_GT);
