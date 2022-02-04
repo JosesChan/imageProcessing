@@ -35,11 +35,9 @@ segment_I = bwareaopen(segment_I, 150);
 
 % Find bloodcells within the image, by looking at 
 [centers, radii] = imfindcircles(segment_I, [50 1000], "Sensitivity", 0.95, "method", "TwoStage");
-%h = viscircles(centers, radii,'Color','r');
-%maskBloodCell = [centers, radii];
 
 % Create mask
-[x y]=meshgrid(1:size(I_gray,2),1:size(I_gray,1));
+[x, y]=meshgrid(1:size(I_gray,2),1:size(I_gray,1));
 mask=zeros(size(I_gray));
 
 for i=1:numel(radii)
@@ -61,19 +59,17 @@ figure, imshow(bloodcell);
 figure, imshow(bacteria);
 figure, imshow(background);
 
-imshowpair(bloodcell, GT)
-title(['Dice Index = ' num2str(similarity)])
+similarity = dice(bloodcell, imbinarize(GT));
 
-[precision] = bfscore(bloodcell,groundTruth);
-[recall] = bfscore(bloodcell,groundTruth);
+figure
+imshowpair(bloodcell, imbinarize(GT));
+title(['Dice Index = ' num2str(similarity)]);
 
-imshowpair(bloodcell, GT)
-title(['Precision Index = ' num2str(precision)]);
+%[precision] = bfscore(bloodcell,GT(1));
+%[recall] = bfscore(bloodcell,GT(1));
 
-imshowpair(bloodcell, GT)
-title(['Recall Index = ' num2str(recall)]);
+%imshowpair(bloodcell, GT(1))
+%title(['Precision Index = ' num2str(precision)]);
 
-% To visualise the ground truth image, you can
-% use the following code.
-L_GT = label2rgb(GT, 'prism','k','shuffle');
-figure, imshow(L_GT);
+%imshowpair(bloodcell, GT(1))
+%title(['Recall Index = ' num2str(recall)]);
