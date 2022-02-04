@@ -33,7 +33,8 @@ figure, imshow(mask);
 segment_I = activecontour(I_gray,mask,500);
 % Remove small blobs
 segment_I = bwareaopen(segment_I, 150);
-figure, imshow(segment_I);
+
+
 
 % Find bloodcells within the image, by looking at 
 [centers, radii] = imfindcircles(segment_I, [50 1000], "Sensitivity", 0.95, "method", "TwoStage");
@@ -48,12 +49,31 @@ for i=1:numel(radii)
 end
 
 bloodcell = segment_I.*mask;
-% Label for 
-addLabel(ldc,0,labelType);
+bloodcell = imbinarize(bloodcell);
+
+
+figure, imshow(bloodcell);
+
+bacteria = xor(segment_I, bloodcell);
+
+figure, imshow(bacteria);
+
+background = zeros(size(I_gray));
+
+figure, imshow(background);
+
+imshowpair(bloodcell, GT)
+title(['Dice Index = ' num2str(similarity)])
+
+imshowpair(bloodcell, GT)
+title(['Dice Index = ' num2str(similarity)])
+
+% Label for background
+%addLabel(ldc,0,labelType.PixelLabel);
 % Label for blood cells
-addLabel(ldc,1,labelType.Rectangle);
+%addLabel(ldc,1,labelType.PixelLabel);
 % Label for bacteria
-addLabel(ldc,2,labelType);
+%addLabel(ldc,2,labelType.PixelLabel);
 %labelBloodCell = bwlabel(bloodcell);
 %imageLabel = (label ==1);
 
