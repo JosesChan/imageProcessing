@@ -54,23 +54,3 @@ figure, imshow(bacteria);
 figure, imshow(background);
 
 
-% Task 6: Performance evaluation -----------------
-% Step 1: Load ground truth data
-%GT = imread("IMG_11_GT.png");
-%L_GT = label2rgb(GT, 'prism','k','shuffle');
-
-% Determine similarity between bloodcell and groundtruth image
-%similarity = dice(bloodcell, imbinarize(GT));
-
-%figure
-%imshowpair(bloodcell, imbinarize(GT));
-%title(['Dice Index = ' num2str(similarity)]);
-
-%[precision] = bfscore(bloodcell,GT(1));
-%[recall] = bfscore(bloodcell,GT(1));
-
-%imshowpair(bloodcell, GT(1))
-%title(['Precision Index = ' num2str(precision)]);
-
-%imshowpair(bloodcell, GT(1))
-%title(['Recall Index = ' num2str(recall)]);
